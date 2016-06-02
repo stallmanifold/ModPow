@@ -1,5 +1,4 @@
-use num::{BigInt, Integer, Zero, One, Num};
-use std::ops::{Shr, ShrAssign};
+use num::{Integer, Zero, One, Num};
 
 
 pub trait ModPow {
