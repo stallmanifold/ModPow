@@ -8,10 +8,12 @@ pub trait ModExp<T> {
     fn mod_exp(base: T, exponent: T, modulus: T) -> Self::Output;
 }
 
+// Marker trait for ModExp implementations
 pub trait BigInteger: Clone + Integer + Num {}
 
 impl BigInteger for BigInt {}
 impl BigInteger for BigUint {}
+
 
 #[inline]
 fn __mod_exp<'a, T>(base: &'a T, exponent: &'a T, modulus: &'a T) -> T
@@ -60,7 +62,7 @@ fn __mod_exp2<T: PrimInt>(base: T, exponent: T, modulus: T) -> T {
 
     let mut result = one;
     let mut modded_base = base % modulus;
-    let mut divided_exponent  = exponent;
+    let mut divided_exponent = exponent;
         
     while divided_exponent > zero {
         if divided_exponent % two == one {
