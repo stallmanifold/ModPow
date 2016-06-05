@@ -1,6 +1,9 @@
 use super::modpow::ModPow;
 use num::BigInt;
 use num::bigint::Sign;
+use std::io::Write;
+use std::io;
+
 
 struct Test {
     data: Vec<TestCase>,
@@ -183,6 +186,47 @@ fn test_cases_large_positive_integers() -> Test {
     }
 }
 
+fn test_cases_modulo_one() -> Test {
+    Test {
+        data: vec![
+            TestCase {
+                modulus:  BigInt::from(1),
+                base:     BigInt::from(596),
+                exponent: BigInt::from(240),
+                expected: BigInt::from(0),
+            },
+            TestCase {
+                modulus:  BigInt::from(1),
+                base:     BigInt::new(Sign::Plus, 
+                            vec![
+                                    005, 994, 690, 336, 495, 925, 843, 986, 047, 696, 580,
+                                    161, 606, 653, 438, 315, 593, 228, 503, 417, 437, 559,
+                                    348, 066, 551, 637, 628, 942, 078, 884, 514, 782, 688
+                                ]),
+                exponent: BigInt::new(Sign::Plus, 
+                            vec![
+                                    620, 163, 966, 216, 732, 528, 880, 396, 978, 013, 207,
+                                    564, 885, 579, 471, 787, 503, 025, 394, 472, 844, 660,
+                                    065, 284, 117, 085, 405, 352, 185, 342, 856, 474, 304
+                                ]),
+                expected: BigInt::from(0),
+            },
+            TestCase {
+                modulus:  BigInt::from(1),
+                base:     BigInt::from(596),
+                exponent: BigInt::from(-240),
+                expected: BigInt::from(0),
+            },
+            TestCase {
+                modulus:  BigInt::from(1),
+                base:     BigInt::from(596),
+                exponent: BigInt::from(0),
+                expected: BigInt::from(0),
+            }
+        ]
+    }
+}
+
 fn run_test(test: &Test) {
     for test_case in test.data.iter() {
         let result = <BigInt as ModPow>::mod_pow(&test_case.base, &test_case.exponent, &test_case.modulus);
@@ -212,4 +256,25 @@ fn test_run_small_positive_integers() {
 #[test]
 fn test_run_large_positive_integers() {
     run_test(&test_cases_large_positive_integers());
+}
+
+#[test]
+fn test_run_integers_modulo_one() {
+    run_test(&test_cases_modulo_one());
+}
+
+fn print_test_cases(test: &Test) {
+    for test_case in test.data.iter() {
+        let result = <BigInt as ModPow>::mod_pow(&test_case.base, &test_case.exponent, &test_case.modulus);
+        writeln!(&mut io::stderr(), "\nmodulus:  {}", test_case.modulus);
+        writeln!(&mut io::stderr(), "base:     {}", test_case.base);
+        writeln!(&mut io::stderr(), "exponent: {}", test_case.exponent);
+        writeln!(&mut io::stderr(), "expected: {}", test_case.expected);
+        writeln!(&mut io::stderr(), "result:   {}\n", result);
+    }
+}
+
+#[test]
+fn test_print_test_cases() {
+    print_test_cases(&test_cases_large_positive_integers());
 }
