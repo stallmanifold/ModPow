@@ -239,7 +239,6 @@ fn test_cases_modulo_one() -> Test {
 
 fn run_test(test: &Test) {
     for test_case in test.data.iter() {
-        //let result = <BigInt as ModExp<&BigInt>>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
         let result = <BigInt as ModExp<&_>>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
         assert_eq!(result, test_case.expected);
     }
@@ -290,4 +289,83 @@ fn print_test_cases(test: &Test) {
 #[allow(dead_code)]
 fn test_print_test_cases() {
     print_test_cases(&test_cases_large_integers());
+}
+
+struct TestCaseI {
+    modulus:  isize,
+    base:     isize,
+    exponent: isize,
+    expected: isize,
+}
+
+struct TestI {
+    data: Vec<TestCaseI>,
+}
+
+// Test cases for small integers.
+fn test_cases_small_integers_i() -> TestI {
+    TestI {
+        data: vec![
+            TestCaseI {
+                modulus:  53,
+                base:     11,
+                exponent: 13,
+                expected: 52,
+            },
+            TestCaseI {
+                modulus:  17,
+                base:     4,
+                exponent: 3,
+                expected: 13,
+            },
+            TestCaseI {
+                modulus:  509,
+                base:     808,
+                exponent: 454,
+                expected: 9,
+            },
+            TestCaseI {
+                modulus:  610,
+                base:     131, 
+                exponent: 870,
+                expected: 1,
+            },
+            TestCaseI {
+                modulus:  802,
+                base:     923,
+                exponent: 483,
+                expected: 721,
+            },
+            TestCaseI {
+                modulus:  800,
+                base:     596,
+                exponent: 240,
+                expected: 576,
+            },
+            TestCaseI {
+                modulus:  833,
+                base:     365,
+                exponent: 915,
+                expected: 155,
+            },
+            TestCaseI {
+                modulus:  461,
+                base:     343, 
+                exponent: 115,
+                expected: 48,
+            }
+        ]
+    }
+}
+
+fn run_test_i(test: &TestI) {
+    for test_case in test.data.iter() {
+        let result = <isize as ModExp<_>>::mod_exp(test_case.base, test_case.exponent, test_case.modulus);
+        assert_eq!(result, test_case.expected);
+    }
+}
+
+#[test]
+fn test_run_small_positive_integers_i() {
+    run_test_i(&test_cases_small_integers_i());
 }

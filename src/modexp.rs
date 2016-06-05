@@ -1,4 +1,5 @@
 use num::{Integer, Zero, One, Num, PrimInt, BigInt, BigUint};
+use std::ops::Mul;
 
 
 pub trait ModExp<T> {
@@ -13,7 +14,9 @@ impl BigInteger for BigInt {}
 impl BigInteger for BigUint {}
 
 #[inline]
-fn __mod_exp<'a, T: BigInteger>(base: &'a T, exponent: &'a T, modulus: &'a T) -> T {
+fn __mod_exp<'a, T>(base: &'a T, exponent: &'a T, modulus: &'a T) -> T
+    where T: BigInteger
+{
     let zero: T = Zero::zero();
 
     assert!(*modulus != zero);
@@ -48,16 +51,16 @@ fn __mod_exp2<T: PrimInt>(base: T, exponent: T, modulus: T) -> T {
 
     assert!(modulus != zero);
 
-    let one: T = One::one();
-    let two: T = <T as One>::one() + <T as One>::one();
+    let one = One::one();
+    let two = one + one;
 
     if modulus == one {
         return zero;
     }
 
-    let mut result: T = One::one();
-    let mut modded_base: T = base % modulus;
-    let mut divided_exponent: T = exponent;
+    let mut result = one;
+    let mut modded_base = base % modulus;
+    let mut divided_exponent  = exponent;
         
     while divided_exponent > zero {
         if divided_exponent % two == one {
