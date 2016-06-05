@@ -34,6 +34,8 @@ impl<T> ModPow for T where T: Clone + Num + Integer {
             modded_base = (modded_base.clone() * modded_base.clone()).mod_floor(modulus);
         }
 
+        debug_assert!(result < *modulus);
+
         result
     }
 }
