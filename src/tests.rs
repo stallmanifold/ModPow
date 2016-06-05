@@ -239,7 +239,7 @@ fn test_cases_modulo_one() -> Test {
 
 fn run_test(test: &Test) {
     for test_case in test.data.iter() {
-        let result = <BigInt as ModExp>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
+        let result = <BigInt as ModExp<&BigInt>>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
         assert_eq!(result, test_case.expected);
     }
 }
@@ -251,7 +251,7 @@ fn test_modexp_should_panic_with_zero_modulus() {
     let exponent = BigInt::from(53);
     let base     = BigInt::from(11);
 
-    let result   = <BigInt as ModExp>::mod_exp(&base, &exponent, &modulus);
+    let result = <BigInt as ModExp<&BigInt>>::mod_exp(&base, &exponent, &modulus);
 
     assert_eq!(result, result);
     // mod_pow failed.
@@ -277,7 +277,7 @@ fn test_run_integers_modulo_one() {
 #[allow(unused_must_use)]
 fn print_test_cases(test: &Test) {
     for test_case in test.data.iter() {
-        let result = <BigInt as ModExp>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
+        let result = <BigInt as ModExp<&BigInt>>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
         writeln!(&mut io::stderr(), "\nmodulus:  {}", test_case.modulus);
         writeln!(&mut io::stderr(), "base:     {}", test_case.base);
         writeln!(&mut io::stderr(), "exponent: {}", test_case.exponent);
