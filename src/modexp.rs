@@ -1,16 +1,16 @@
 use num::{Integer, Zero, One, Num};
 
 
-pub trait ModPow {
+pub trait ModExp {
     type IntType;
 
-    fn mod_pow(base: &Self::IntType, exponent: &Self::IntType, modulus: &Self::IntType) -> Self::IntType;
+    fn mod_exp(base: &Self::IntType, exponent: &Self::IntType, modulus: &Self::IntType) -> Self::IntType;
 }
 
-impl<T> ModPow for T where T: Clone + Num + Integer {
+impl<T> ModExp for T where T: Clone + Num + Integer {
     type IntType = T;
 
-    fn mod_pow(base: &T, exponent: &T, modulus: &T) -> T {
+    fn mod_exp(base: &T, exponent: &T, modulus: &T) -> T {
         let zero: T = Zero::zero();
 
         assert!(*modulus != zero);

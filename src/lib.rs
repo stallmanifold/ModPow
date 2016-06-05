@@ -1,8 +1,8 @@
-pub use modpow::ModPow;
+pub use modexp::ModExp;
 
 extern crate num;
 
-pub mod modpow;
+pub mod modexp;
 
 #[cfg(test)]
 mod tests;
