@@ -1,5 +1,4 @@
 use num::{Integer, Zero, One, Num, PrimInt, BigInt, BigUint};
-use std::ops::Mul;
 
 
 pub trait ModExp<T> {
