@@ -1,13 +1,13 @@
 #![feature(test)]
 pub use modexp::ModExp;
-pub use modmul::ModMul;
+pub use modmult::ModMult;
 
 
 extern crate num;
 extern crate test;
 
 pub mod modexp;
-pub mod modmul;
+pub mod modmult;
 
 #[cfg(test)]
 mod tests;
