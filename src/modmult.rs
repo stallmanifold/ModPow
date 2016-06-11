@@ -1,4 +1,4 @@
-use num::{Integer, Zero, One, Num, PrimInt, BigInt, BigUint};
+use num::{Integer, Zero, One, Num, BigInt};
 
 
 pub trait ModMult<T> {
@@ -6,3 +6,4 @@ pub trait ModMult<T> {
 
     fn mod_mult(base: T, exponent: T, modulus: T) -> Self::Output;
 }
+
