@@ -1,4 +1,4 @@
-use num::{Integer, Zero, One, Num, BigInt};
+use num::{Zero, One, Num, BigInt};
 
 
 pub trait ModMult<T> {

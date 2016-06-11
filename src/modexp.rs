@@ -1,4 +1,4 @@
-use num::{Integer, Zero, One, Num, PrimInt, BigInt, BigUint};
+use num::{Integer, Zero, One, PrimInt, BigInt, BigUint};
 
 
 pub trait ModExp<T> {

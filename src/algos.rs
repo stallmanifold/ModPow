@@ -1,16 +1,36 @@
 use num::{Integer, Zero, One, BigInt};
+use num::bigint::Sign;
+
+pub struct GcdResult {
+    pub coef_x: BigInt,
+    pub coef_y: BigInt,
+    pub g:      BigInt,
+    pub gcd_xy: BigInt,
+}
 
 /// 
 /// Implementation of the binary extended gcd algorithm.
 ///
 /// See Algorithm 14.61 of the 'Handbook of Applied Cryptography'.
 ///
-pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<(BigInt, BigInt, BigInt, BigInt)> {
-    let zero: BigInt = Zero::zero();
-
-    if (*x <= zero) || (*y <= zero) {
+/// Given integers x and y, compute integers a and b such that
+/// a*x + b*y = v where v = gcd(x, y).
+///
+pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult> {
+    if (x.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
         return None;
     }
+
+    Some(__extended_gcd(x, y))
+}
+
+
+/// Panics if x and y are nonpositive.
+#[inline]
+fn __extended_gcd(x: &BigInt, y: &BigInt) -> GcdResult {
+    let zero: BigInt = Zero::zero();
+
+    assert!((*x > zero) && (*y > zero));
 
     let mut xx = x.clone();
     let mut yy = y.clone();
@@ -65,7 +85,25 @@ pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<(BigInt, BigInt, BigInt, B
         }
 
         if u == zero {
-            return Some((c, d, g, v));
+            return GcdResult {
+                coef_x: c,
+                coef_y: d,
+                g:      g,
+                gcd_xy: v,
+            }
+        }
+    }
+}
+
+pub fn mod_inv(x: &BigInt, modulus: &BigInt) -> Option<BigInt> {
+    let result = extended_gcd(x, modulus);
+    match result {
+        None             => None,
+        Some(gcd_result) => {
+            match gcd_result.coef_x.sign() {
+                Sign::Plus | Sign::NoSign => Some(gcd_result.coef_x),
+                Sign::Minus => Some(modulus + gcd_result.coef_x), 
+            }
         }
     }
 }
