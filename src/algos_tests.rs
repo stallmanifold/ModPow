@@ -59,15 +59,12 @@ fn gcd_test_cases() -> GcdTest {
 fn run_gcd_test(test: & GcdTest) {
     for test_case in test.data.iter() {
         let result = algos::extended_gcd(&test_case.x, &test_case.y).unwrap();
-        println!("{}", result.gcd_xy);
-        println!("{}", test_case.gcd_xy);
-        println!("{}", result.gcd_xy);
-        println!("{}", test_case.gcd_xy);
-        println!("{}", result.gcd_xy);
-        println!("{}", test_case.gcd_xy);
         assert_eq!(result.gcd_xy, test_case.gcd_xy);
-        assert_eq!(result.coef_x, test_case.coef_x);
-        assert_eq!(result.coef_y, test_case.coef_y);
+        assert!(algos::valid_solution(&test_case.x, &test_case.y, 
+                                      &result.coef_x, &result.coef_y, &test_case.gcd_xy));
+        // Show that coefficients returned by the extended_gcd algorithm are not unique.
+        assert!(algos::valid_solution(&test_case.x, &test_case.y, 
+                                      &test_case.coef_x, &test_case.coef_y, &test_case.gcd_xy));
     }
 }
 

@@ -14,7 +14,11 @@ pub struct GcdResult {
 /// See Algorithm 14.61 of the 'Handbook of Applied Cryptography'.
 ///
 /// Given integers x and y, compute integers a and b such that
+///
 /// a*x + b*y = v where v = gcd(x, y).
+///
+/// Note that the coefficients found by the extended GCD algorithm are not unique: That is,
+/// there is more than one set of solutions to the diophantine equation above.
 ///
 pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult> {
     if (x.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
@@ -85,6 +89,8 @@ fn __extended_gcd(x: &BigInt, y: &BigInt) -> GcdResult {
         }
 
         if u == zero {
+            v = &g * v;
+
             return GcdResult {
                 coef_x: c,
                 coef_y: d,
@@ -93,6 +99,10 @@ fn __extended_gcd(x: &BigInt, y: &BigInt) -> GcdResult {
             }
         }
     }
+}
+
+pub fn valid_solution(x: &BigInt, y: &BigInt, coef_x: &BigInt, coef_y: &BigInt, gcd_xy: &BigInt) -> bool {
+    coef_x * x + coef_y * y == *gcd_xy
 }
 
 pub fn mod_inv(x: &BigInt, modulus: &BigInt) -> Option<BigInt> {
