@@ -1,6 +1,13 @@
 use num::{Integer, Zero, One, PrimInt, BigInt, BigUint};
 
 
+/// Trait for modular exponentiation.
+///
+/// The function `mod_exp` computes
+/// ```
+/// b^e mod m
+/// ```
+/// where b is the base, e is the exponent, and m is the modulus. 
 pub trait ModExp<T> {
     type Output; 
 

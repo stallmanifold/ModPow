@@ -1,6 +1,9 @@
 use num::{Integer, Zero, One, BigInt};
 use num::bigint::Sign;
 
+
+/// A data structure storing the results of computing the greatest common
+/// divisor of two integers.
 pub struct GcdResult {
     pub coef_x: BigInt,
     pub coef_y: BigInt,
@@ -20,8 +23,16 @@ pub struct GcdResult {
 /// Note that the coefficients found by the extended GCD algorithm are not unique: That is,
 /// there is more than one set of solutions to the diophantine equation above.
 ///
+/// # Safety
+/// Returns None if x < 0 or y < 0.
 pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult> {
     if (x.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
+        return None;
+    }
+
+    let zero = <BigInt as Zero>::zero();
+
+    if (*x == zero) || (*y == zero) {
         return None;
     }
 
@@ -29,7 +40,7 @@ pub fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult> {
 }
 
 
-/// Panics if x and y are nonpositive.
+// Panics if x and y are nonpositive.
 #[inline]
 fn __extended_gcd(x: &BigInt, y: &BigInt) -> GcdResult {
     let zero: BigInt = Zero::zero();
@@ -101,10 +112,27 @@ fn __extended_gcd(x: &BigInt, y: &BigInt) -> GcdResult {
     }
 }
 
+/// Tests whether a pair of coefficients coef_x and coef_t are 
+/// valid solutions to the equation
+/// ```
+/// coef_x * x + coef_y * y = gcd_xy
+/// ```
+/// where 
+/// ```
+/// gcd_xy = gcd(x,y)
+/// ```
 pub fn valid_solution(x: &BigInt, y: &BigInt, coef_x: &BigInt, coef_y: &BigInt, gcd_xy: &BigInt) -> bool {
     coef_x * x + coef_y * y == *gcd_xy
 }
 
+/// Computes the modular inverse of an integer x: 
+/// ```
+/// y = x^-1 mod p
+/// ```
+/// where p is the modulus, and
+/// ```
+/// x*y = 1 mod p
+/// ```
 pub fn mod_inv(x: &BigInt, modulus: &BigInt) -> Option<BigInt> {
     let result = extended_gcd(x, modulus);
     match result {
