@@ -12,8 +12,8 @@ pub struct GcdResult<T> {
 }
 
 /// Extended Gcd Algorithm trait.
-pub trait ExtendedGcd<T> {
-    type Output;
+pub trait ExtendedGcd<T, Output> {
+    //type Output;
 
     /// Implementation of the binary extended gcd algorithm.
     ///
@@ -28,7 +28,7 @@ pub trait ExtendedGcd<T> {
     ///
     /// # Safety
     /// Returns None if x < 0 or y < 0.
-    fn extended_gcd(x: T, y: T) -> Option<GcdResult<Self::Output>>;
+    fn extended_gcd(x: T, y: T) -> Option<GcdResult<Output>>;
 
     /// Tests whether a pair of coefficients coef_x and coef_t are 
     /// valid solutions to the equation
@@ -42,8 +42,7 @@ pub trait ExtendedGcd<T> {
     fn valid_solution(x: T, y: T, coef_x: T, coef_y: T, gcd_xy: T) -> bool;
 }
 
-impl<'a> ExtendedGcd<&'a BigInt> for BigInt {
-    type Output = BigInt;
+impl<'a> ExtendedGcd<&'a BigInt, BigInt> for BigInt {
 
     fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult<BigInt>> {
         if (x.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
@@ -136,15 +135,14 @@ fn __extended_gcd_bigint(x: &BigInt, y: &BigInt) -> GcdResult<BigInt> {
     }
 }
 
-impl ExtendedGcd<BigInt> for BigInt {
-    type Output = BigInt;
+impl ExtendedGcd<BigInt, BigInt> for BigInt {
 
     fn extended_gcd(x: BigInt, y: BigInt) -> Option<GcdResult<BigInt>> {
-        <BigInt as ExtendedGcd<&_>>::extended_gcd(&x, &y)
+        <BigInt as ExtendedGcd<&_,_>>::extended_gcd(&x, &y)
     }
 
     fn valid_solution(x: BigInt, y: BigInt, coef_x: BigInt, coef_y: BigInt, gcd_xy: BigInt) -> bool {
-        <BigInt as ExtendedGcd<&_>>::valid_solution(&x, &y, &coef_x, &coef_y, &gcd_xy)
+        <BigInt as ExtendedGcd<&_,_>>::valid_solution(&x, &y, &coef_x, &coef_y, &gcd_xy)
     }
 }
 
@@ -241,8 +239,7 @@ fn __valid_solution<T: PrimInt>(x: T, y: T, coef_x: T, coef_y: T, gcd_xy: T) -> 
     coef_x * x + coef_y * y == gcd_xy
 }
 
-impl ExtendedGcd<isize> for isize {
-    type Output = isize;
+impl ExtendedGcd<isize, isize> for isize {
 
     fn extended_gcd(x: isize, y: isize) -> Option<GcdResult<isize>> {
         safe_extended_gcd(x, y)
@@ -253,8 +250,7 @@ impl ExtendedGcd<isize> for isize {
     }
 }
 
-impl ExtendedGcd<i8> for i8 {
-    type Output = i8;
+impl ExtendedGcd<i8, i8> for i8 {
 
     fn extended_gcd(x: i8, y: i8) -> Option<GcdResult<i8>> {
         safe_extended_gcd(x, y)
@@ -265,8 +261,7 @@ impl ExtendedGcd<i8> for i8 {
     }
 }
 
-impl ExtendedGcd<i16> for i16 {
-    type Output = i16;
+impl ExtendedGcd<i16, i16> for i16 {
 
     fn extended_gcd(x: i16, y: i16) -> Option<GcdResult<i16>> {
         safe_extended_gcd(x, y)
@@ -277,8 +272,7 @@ impl ExtendedGcd<i16> for i16 {
     }
 }
 
-impl ExtendedGcd<i32> for i32 {
-    type Output = i32;
+impl ExtendedGcd<i32, i32> for i32 {
 
     fn extended_gcd(x: i32, y: i32) -> Option<GcdResult<i32>> {
         safe_extended_gcd(x, y)
@@ -289,8 +283,7 @@ impl ExtendedGcd<i32> for i32 {
     }
 }
 
-impl ExtendedGcd<i64> for i64 {
-    type Output = i64;
+impl ExtendedGcd<i64, i64> for i64 {
 
     fn extended_gcd(x: i64, y: i64) -> Option<GcdResult<i64>> {
         safe_extended_gcd(x, y)

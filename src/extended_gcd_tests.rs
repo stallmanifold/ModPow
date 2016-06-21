@@ -1,4 +1,4 @@
-use num::{One, Integer, BigInt, Num};
+use num::{BigInt, Num};
 use extended_gcd::ExtendedGcd;
 
 
@@ -72,12 +72,12 @@ fn gcd_test_cases() -> Test {
 
 fn run_gcd_test(test: &Test) {
     for test_case in test.data.iter() {
-        let result = <BigInt as ExtendedGcd<&_>>::extended_gcd(&test_case.x, &test_case.y).unwrap();
+        let result = <BigInt as ExtendedGcd<&_,_>>::extended_gcd(&test_case.x, &test_case.y).unwrap();
         assert_eq!(result.gcd_xy, test_case.gcd_xy);
-        assert!(<BigInt as ExtendedGcd<&_>>::valid_solution(&test_case.x, &test_case.y, 
+        assert!(<BigInt as ExtendedGcd<&_,_>>::valid_solution(&test_case.x, &test_case.y, 
                                           &result.coef_x, &result.coef_y, &test_case.gcd_xy));
         // Show that coefficients returned by the extended_gcd algorithm are not unique.
-        assert!(<BigInt as ExtendedGcd<&_>>::valid_solution(&test_case.x, &test_case.y, 
+        assert!(<BigInt as ExtendedGcd<&_,_>>::valid_solution(&test_case.x, &test_case.y, 
                                     &test_case.coef_x, &test_case.coef_y, &test_case.gcd_xy));
     }
 }
