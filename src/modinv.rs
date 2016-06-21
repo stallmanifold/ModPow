@@ -1,4 +1,4 @@
-use num::{Integer, Zero, One, BigInt, PrimInt};
+use num::{One, Integer, BigInt, Num};
 use num::bigint::Sign;
 use extended_gcd::ExtendedGcd;
 
