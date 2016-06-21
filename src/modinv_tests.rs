@@ -1,5 +1,6 @@
 use num::{One, Integer, BigInt, Num};
-use mod_inv::ModInv;
+//use modinv::ModInv;
+use modinv;
 
 
 struct TestCase {
@@ -41,7 +42,7 @@ fn mod_inverse_test_cases() -> Test {
 
 fn run_mod_inverse_test(test: &Test) {
     for test_case in test.data.iter() {
-        let result = algos::mod_inv(&test_case.a, &test_case.modulus);
+        let result = modinv::mod_inv(&test_case.a, &test_case.modulus);
 
         assert!(result.is_some());
 

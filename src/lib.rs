@@ -13,7 +13,6 @@ pub mod modmult;
 pub mod extended_gcd;
 pub mod modinv;
 
-mod algos;
 
 #[cfg(test)]
 mod modexp_tests;
@@ -22,7 +21,7 @@ mod modexp_tests;
 mod modexp_bench;
 
 #[cfg(test)]
-mod algos_tests;
+mod extended_gcd_tests;
 
 #[cfg(test)]
-mod extended_gcd_tests;
+mod modinv_tests;
