@@ -40,7 +40,8 @@ impl ModInv<BigInt, BigInt> for BigInt {
     }
 }
 
-fn __mod_inv<T>(x: T, modulus: T) -> Option<T> where T: PrimInt + ExtendedGcd<T,T>{
+#[inline]
+fn __mod_inv<T>(x: T, modulus: T) -> Option<T> where T: PrimInt + ExtendedGcd<T,T> {
     let result = <T as ExtendedGcd<T,T>>::extended_gcd(x, modulus);
     match result {
         None             => None,

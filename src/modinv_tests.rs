@@ -51,7 +51,7 @@ fn isize_test_cases() -> Test<isize> {
             TestCase {
                 a:       271,
                 a_inv:   106,
-                modulus: 383
+                modulus: 383,
             },
             TestCase {
                 a:       67,
