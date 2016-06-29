@@ -209,11 +209,7 @@ fn __extended_gcd<T: PrimInt>(x: &T, y: &T) -> Gcd<T> {
 fn safe_extended_gcd<T: PrimInt>(x: &T, y: &T) -> Option<Gcd<T>> {
     let zero = <T as Zero>::zero();
 
-    if (*x < zero) || (*y < zero) {
-        return None;
-    }
-
-    if (*x == zero) || (*y == zero) {
+    if (*x <= zero) || (*y <= zero) {
         return None;
     }
 

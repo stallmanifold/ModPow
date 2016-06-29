@@ -13,6 +13,16 @@ struct Test<T> {
     data: Vec<TestCase<T>>,
 }
 
+// Non-invertible test cases for mod_inv.
+struct NonInvTestCase<T> {
+    a: T,
+    modulus: T,
+}
+
+struct NonInvTest<T> {
+    data: Vec<NonInvTestCase<T>>,
+}
+
 fn bigint_test_cases() -> Test<BigInt> {
     Test {
         data: vec![
@@ -67,36 +77,30 @@ fn isize_test_cases() -> Test<isize> {
     }
 }
 
-// a_inv is ignored by the test runner for these test cases. It is just a stub.
-fn non_invertible_isize_test_cases() -> Test<isize> {
-    Test {
+fn non_invertible_isize_test_cases() -> NonInvTest<isize> {
+    NonInvTest {
         data: vec![
-            TestCase {
+            NonInvTestCase {
                 a:       61,
-                a_inv:   0,      // a_inv is ignored by the test runner
                 modulus: 17324,
             },
-            TestCase {
+            NonInvTestCase {
                 a:       3404,
-                a_inv:   0,      // a_inv is ignored by the test runner
                 modulus: 456458,
             }
         ]
     }
 }
 
-// a_inv is ignored by the test runner for these test cases. It is just a stub.
-fn non_invertible_bigint_test_cases() -> Test<BigInt> {
-    Test {
+fn non_invertible_bigint_test_cases() -> NonInvTest<BigInt> {
+    NonInvTest {
         data: vec![
-            TestCase {
+            NonInvTestCase {
                 a:       BigInt::from(61),
-                a_inv:   BigInt::from(0),
                 modulus: BigInt::from(17324),
             },
-            TestCase {
+            NonInvTestCase {
                 a:       BigInt::from(3404),
-                a_inv:   BigInt::from(0),
                 modulus: BigInt::from(456458),
             }
         ]
@@ -118,7 +122,7 @@ fn run_tests<T>(test: &Test<T>)
     }
 }
 
-fn run_bad_tests<T>(test: &Test<T>) 
+fn run_non_inv_tests<T>(test: &NonInvTest<T>) 
     where T: Integer + ModInv<T> + Debug + Clone {
 
     for test_case in test.data.iter() {
@@ -140,10 +144,10 @@ fn test_mod_inverse_isize() {
 
 #[test]
 fn test_non_invertible() {
-    run_bad_tests(&non_invertible_isize_test_cases());
+    run_non_inv_tests(&non_invertible_isize_test_cases());
 }
 
 #[test]
 fn test_non_invertible_bigint() {
-    run_bad_tests(&non_invertible_bigint_test_cases());
+    run_non_inv_tests(&non_invertible_bigint_test_cases());
 }
