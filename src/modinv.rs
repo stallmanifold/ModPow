@@ -3,7 +3,7 @@ use num::bigint::Sign;
 use extended_gcd::ExtendedGcd;
 
 
-pub trait ModInv<T, Output> {
+pub trait ModInv<T> {
     /// Computes the modular inverse of an integer x: 
     /// ```
     /// y = x^-1 mod p
@@ -12,13 +12,12 @@ pub trait ModInv<T, Output> {
     /// ```
     /// x*y = 1 mod p
     /// ```
-    fn mod_inv(x: T, modulus: T) -> Option<Output>;
+    fn mod_inv(&self, modulus: &T) -> Option<T>;
 }
 
-impl<'a> ModInv<&'a BigInt, BigInt> for BigInt {
-
-    fn mod_inv(x: &BigInt, modulus: &BigInt) -> Option<BigInt> {
-        let result = <BigInt as ExtendedGcd<&_,_>>::extended_gcd(x, modulus);
+impl ModInv<BigInt> for BigInt {
+    fn mod_inv(&self, modulus: &BigInt) -> Option<BigInt> {
+        let result = self.extended_gcd(modulus);
         
         result.and_then(|gcd_result| {
             match gcd_result.gcd_xy == One::one() {
@@ -34,23 +33,16 @@ impl<'a> ModInv<&'a BigInt, BigInt> for BigInt {
     }
 }
 
-impl ModInv<BigInt, BigInt> for BigInt {
-
-    fn mod_inv(x: BigInt, modulus: BigInt) -> Option<BigInt> {
-        <BigInt as ModInv<&_,_>>::mod_inv(&x, &modulus)
-    }
-}
-
 #[inline]
-fn __mod_inv<T>(x: T, modulus: T) -> Option<T> where T: PrimInt + ExtendedGcd<T,T> {
-    let result = <T as ExtendedGcd<T,T>>::extended_gcd(x, modulus);
+fn __mod_inv<T>(x: &T, modulus: &T) -> Option<T> where T: PrimInt + ExtendedGcd<T> {
+    let result = x.extended_gcd(modulus);
     
     result.and_then(|gcd_result| {
         match gcd_result.gcd_xy == One::one() {
             true => {
                 match gcd_result.coef_x >= Zero::zero() {
                     true  => Some(gcd_result.coef_x),
-                    false => Some(modulus + gcd_result.coef_x),
+                    false => Some(*modulus + gcd_result.coef_x),
                 }
             }
             false => None,
@@ -58,37 +50,32 @@ fn __mod_inv<T>(x: T, modulus: T) -> Option<T> where T: PrimInt + ExtendedGcd<T,
     })
 }
 
-impl ModInv<isize, isize> for isize {
-
-    fn mod_inv(x: isize, modulus: isize) -> Option<isize> {
-        __mod_inv(x, modulus)
+impl ModInv<isize> for isize {
+    fn mod_inv(&self, modulus: &isize) -> Option<isize> {
+        __mod_inv(self, modulus)
     }
 }
 
-impl ModInv<i8, i8> for i8 {
-
-    fn mod_inv(x: i8, modulus: i8) -> Option<i8> {
-        __mod_inv(x, modulus)        
+impl ModInv<i8> for i8 {
+    fn mod_inv(&self, modulus: &i8) -> Option<i8> {
+        __mod_inv(self, modulus)        
     }
 }
 
-impl ModInv<i16, i16> for i16 {
-
-    fn mod_inv(x: i16, modulus: i16) -> Option<i16> {
-        __mod_inv(x, modulus)        
+impl ModInv<i16> for i16 {
+    fn mod_inv(&self, modulus: &i16) -> Option<i16> {
+        __mod_inv(self, modulus)        
     }
 }
 
-impl ModInv<i32, i32> for i32 {
-
-    fn mod_inv(x: i32, modulus: i32) -> Option<i32> {
-        __mod_inv(x, modulus)        
+impl ModInv<i32> for i32 {
+    fn mod_inv(&self, modulus: &i32) -> Option<i32> {
+        __mod_inv(self, modulus)        
     }
 }
 
-impl ModInv<i64, i64> for i64 {
-
-    fn mod_inv(x: i64, modulus: i64) -> Option<i64> {
-        __mod_inv(x, modulus)        
+impl ModInv<i64> for i64 {
+    fn mod_inv(&self, modulus: &i64) -> Option<i64> {
+        __mod_inv(self, modulus)        
     }
 }

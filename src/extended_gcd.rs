@@ -4,7 +4,7 @@ use num::bigint::Sign;
 
 /// A data structure storing the results of computing the greatest common
 /// divisor of two integers.
-pub struct GcdResult<T> {
+pub struct Gcd<T> {
     pub coef_x: T,
     pub coef_y: T,
     pub g:      T,
@@ -12,9 +12,7 @@ pub struct GcdResult<T> {
 }
 
 /// Extended Gcd Algorithm trait.
-pub trait ExtendedGcd<T, Output> {
-    //type Output;
-
+pub trait ExtendedGcd<T> {
     /// Implementation of the binary extended gcd algorithm.
     ///
     /// See Algorithm 14.61 of the 'Handbook of Applied Cryptography'.
@@ -28,7 +26,7 @@ pub trait ExtendedGcd<T, Output> {
     ///
     /// # Safety
     /// Returns None if x < 0 or y < 0.
-    fn extended_gcd(x: T, y: T) -> Option<GcdResult<Output>>;
+    fn extended_gcd(&self, y: &T) -> Option<Gcd<T>>;
 
     /// Tests whether a pair of coefficients coef_x and coef_t are 
     /// valid solutions to the equation
@@ -39,23 +37,22 @@ pub trait ExtendedGcd<T, Output> {
     /// ```
     /// gcd_xy = gcd(x,y)
     /// ```
-    fn valid_solution(x: T, y: T, coef_x: T, coef_y: T, gcd_xy: T) -> bool;
+    fn valid_solution(x: &T, y: &T, coef_x: &T, coef_y: &T, gcd_xy: &T) -> bool;
 }
 
-impl<'a> ExtendedGcd<&'a BigInt, BigInt> for BigInt {
-
-    fn extended_gcd(x: &BigInt, y: &BigInt) -> Option<GcdResult<BigInt>> {
-        if (x.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
+impl ExtendedGcd<BigInt> for BigInt {
+    fn extended_gcd(&self, y: &BigInt) -> Option<Gcd<BigInt>> {
+        if (self.sign() == Sign::Minus) || (y.sign() == Sign::Minus) {
             return None;
         }
 
         let zero = <BigInt as Zero>::zero();
 
-        if (*x == zero) || (*y == zero) {
+        if (*self == zero) || (*y == zero) {
             return None;
         }
 
-        Some(__extended_gcd_bigint(x, y))
+        Some(__extended_gcd_bigint(self, y))
     }
 
     fn valid_solution(x: &BigInt, y: &BigInt, coef_x: &BigInt, coef_y: &BigInt, gcd_xy: &BigInt) -> bool {
@@ -65,7 +62,7 @@ impl<'a> ExtendedGcd<&'a BigInt, BigInt> for BigInt {
 
 // Panics if x and y are nonpositive.
 #[inline]
-fn __extended_gcd_bigint(x: &BigInt, y: &BigInt) -> GcdResult<BigInt> {
+fn __extended_gcd_bigint(x: &BigInt, y: &BigInt) -> Gcd<BigInt> {
     let zero: BigInt = Zero::zero();
 
     assert!((*x > zero) && (*y > zero));
@@ -125,7 +122,7 @@ fn __extended_gcd_bigint(x: &BigInt, y: &BigInt) -> GcdResult<BigInt> {
         if u == zero {
             v = &g * v;
 
-            return GcdResult {
+            return Gcd {
                 coef_x: c,
                 coef_y: d,
                 g:      g,
@@ -135,27 +132,16 @@ fn __extended_gcd_bigint(x: &BigInt, y: &BigInt) -> GcdResult<BigInt> {
     }
 }
 
-impl ExtendedGcd<BigInt, BigInt> for BigInt {
-
-    fn extended_gcd(x: BigInt, y: BigInt) -> Option<GcdResult<BigInt>> {
-        <BigInt as ExtendedGcd<&_,_>>::extended_gcd(&x, &y)
-    }
-
-    fn valid_solution(x: BigInt, y: BigInt, coef_x: BigInt, coef_y: BigInt, gcd_xy: BigInt) -> bool {
-        <BigInt as ExtendedGcd<&_,_>>::valid_solution(&x, &y, &coef_x, &coef_y, &gcd_xy)
-    }
-}
-
 // Panics if x and y are nonpositive.
 #[inline]
-fn __extended_gcd<T: PrimInt>(x: T, y: T) -> GcdResult<T> {
+fn __extended_gcd<T: PrimInt>(x: &T, y: &T) -> Gcd<T> {
     let zero: T = Zero::zero();
     let mask: T = One::one();
 
-    assert!((x > zero) && (y > zero));
+    assert!((*x > zero) && (*y > zero));
 
-    let mut xx = x;
-    let mut yy = y;
+    let mut xx = *x;
+    let mut yy = *y;
     let mut g: T = One::one();
 
     while (xx & mask == zero) && (yy & mask == zero) {
@@ -209,7 +195,7 @@ fn __extended_gcd<T: PrimInt>(x: T, y: T) -> GcdResult<T> {
         if u == zero {
             v = g * v;
 
-            return GcdResult {
+            return Gcd {
                 coef_x: c,
                 coef_y: d,
                 g:      g,
@@ -220,14 +206,14 @@ fn __extended_gcd<T: PrimInt>(x: T, y: T) -> GcdResult<T> {
 }
 
 #[inline]
-fn safe_extended_gcd<T: PrimInt>(x: T, y: T) -> Option<GcdResult<T>> {
+fn safe_extended_gcd<T: PrimInt>(x: &T, y: &T) -> Option<Gcd<T>> {
     let zero = <T as Zero>::zero();
 
-    if (x < zero) || (y < zero) {
+    if (*x < zero) || (*y < zero) {
         return None;
     }
 
-    if (x == zero) || (y == zero) {
+    if (*x == zero) || (*y == zero) {
         return None;
     }
 
@@ -235,61 +221,56 @@ fn safe_extended_gcd<T: PrimInt>(x: T, y: T) -> Option<GcdResult<T>> {
 }
 
 #[inline]
-fn __valid_solution<T: PrimInt>(x: T, y: T, coef_x: T, coef_y: T, gcd_xy: T) -> bool {
-    coef_x * x + coef_y * y == gcd_xy
+fn __valid_solution<T: PrimInt>(x: &T, y: &T, coef_x: &T, coef_y: &T, gcd_xy: &T) -> bool {
+    (*coef_x) * (*x) + (*coef_y) * (*y) == *gcd_xy
 }
 
-impl ExtendedGcd<isize, isize> for isize {
-
-    fn extended_gcd(x: isize, y: isize) -> Option<GcdResult<isize>> {
-        safe_extended_gcd(x, y)
+impl ExtendedGcd<isize> for isize {
+    fn extended_gcd(&self, y: &isize) -> Option<Gcd<isize>> {
+        safe_extended_gcd(self, y)
     }
 
-    fn valid_solution(x: isize, y: isize, coef_x: isize, coef_y: isize, gcd_xy: isize) -> bool {
+    fn valid_solution(x: &isize, y: &isize, coef_x: &isize, coef_y: &isize, gcd_xy: &isize) -> bool {
         __valid_solution(x, y, coef_x, coef_y, gcd_xy)
     }
 }
 
-impl ExtendedGcd<i8, i8> for i8 {
-
-    fn extended_gcd(x: i8, y: i8) -> Option<GcdResult<i8>> {
-        safe_extended_gcd(x, y)
+impl ExtendedGcd<i8> for i8 {
+    fn extended_gcd(&self, y: &i8) -> Option<Gcd<i8>> {
+        safe_extended_gcd(self, y)
     }
 
-    fn valid_solution(x: i8, y: i8, coef_x: i8, coef_y: i8, gcd_xy: i8) -> bool {
+    fn valid_solution(x: &i8, y: &i8, coef_x: &i8, coef_y: &i8, gcd_xy: &i8) -> bool {
         __valid_solution(x, y, coef_x, coef_y, gcd_xy)
     }
 }
 
-impl ExtendedGcd<i16, i16> for i16 {
-
-    fn extended_gcd(x: i16, y: i16) -> Option<GcdResult<i16>> {
-        safe_extended_gcd(x, y)
+impl ExtendedGcd<i16> for i16 {
+    fn extended_gcd(&self, y: &i16) -> Option<Gcd<i16>> {
+        safe_extended_gcd(self, y)
     }
 
-    fn valid_solution(x: i16, y: i16, coef_x: i16, coef_y: i16, gcd_xy: i16) -> bool {
+    fn valid_solution(x: &i16, y: &i16, coef_x: &i16, coef_y: &i16, gcd_xy: &i16) -> bool {
         __valid_solution(x, y, coef_x, coef_y, gcd_xy)
     }
 }
 
-impl ExtendedGcd<i32, i32> for i32 {
-
-    fn extended_gcd(x: i32, y: i32) -> Option<GcdResult<i32>> {
-        safe_extended_gcd(x, y)
+impl ExtendedGcd<i32> for i32 {
+    fn extended_gcd(&self, y: &i32) -> Option<Gcd<i32>> {
+        safe_extended_gcd(self, y)
     }
 
-    fn valid_solution(x: i32, y: i32, coef_x: i32, coef_y: i32, gcd_xy: i32) -> bool {
+    fn valid_solution(x: &i32, y: &i32, coef_x: &i32, coef_y: &i32, gcd_xy: &i32) -> bool {
         __valid_solution(x, y, coef_x, coef_y, gcd_xy)
     }
 }
 
-impl ExtendedGcd<i64, i64> for i64 {
-
-    fn extended_gcd(x: i64, y: i64) -> Option<GcdResult<i64>> {
-        safe_extended_gcd(x, y)
+impl ExtendedGcd<i64> for i64 {
+    fn extended_gcd(&self, y: &i64) -> Option<Gcd<i64>> {
+        safe_extended_gcd(self, y)
     }
 
-    fn valid_solution(x: i64, y: i64, coef_x: i64, coef_y: i64, gcd_xy: i64) -> bool {
+    fn valid_solution(x: &i64, y: &i64, coef_x: &i64, coef_y: &i64, gcd_xy: &i64) -> bool {
         __valid_solution(x, y, coef_x, coef_y, gcd_xy)
     }
 }

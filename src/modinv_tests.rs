@@ -104,10 +104,10 @@ fn non_invertible_bigint_test_cases() -> Test<BigInt> {
 }
 
 fn run_tests<T>(test: &Test<T>) 
-    where T: Integer + ModInv<T,T> + Debug + Clone {
+    where T: Integer + ModInv<T> + Debug + Clone {
 
     for test_case in test.data.iter() {
-        let result = <T as ModInv<T,T>>::mod_inv(test_case.a.clone(), test_case.modulus.clone());
+        let result = test_case.a.mod_inv(&test_case.modulus);
 
         assert!(result.is_some());
 
@@ -119,10 +119,10 @@ fn run_tests<T>(test: &Test<T>)
 }
 
 fn run_bad_tests<T>(test: &Test<T>) 
-    where T: Integer + ModInv<T,T> + Debug + Clone {
+    where T: Integer + ModInv<T> + Debug + Clone {
 
     for test_case in test.data.iter() {
-        let result = <T as ModInv<T,T>>::mod_inv(test_case.a.clone(), test_case.modulus.clone());
+        let result = test_case.a.mod_inv(&test_case.modulus);
 
         assert!(result.is_none());
     }
