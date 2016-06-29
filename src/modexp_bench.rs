@@ -66,5 +66,5 @@ fn bench_mod_exp_no_clone(b: &mut Bencher) {
 fn bench_mod_exp_clone(b: &mut Bencher) {
     let (base, exponent, modulus) = bench_test_case();
 
-    b.iter(|| <BigInt as ModExp<&_>>::mod_exp(&base, &exponent, &modulus));
+    b.iter(|| <BigInt as ModExp>::mod_exp(&base, &exponent, &modulus));
 }
