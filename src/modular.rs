@@ -1,6 +1,6 @@
 use modinv::ModInv;
 use modmult::ModMult;
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Mul, Sub, Div};
 use std::fmt::Debug;
 use num::{Zero, One, Integer};
 
@@ -211,6 +211,65 @@ impl<'a, 'b, I> Sub<&'a Mod<I>> for &'b Mod<I>
         Mod::new(&new_value, &self.modulus)
     }
 }
+
+impl<I> Div<Mod<I>> for Mod<I>
+    where I: Clone + Eq + Debug + Div<I, Output=I> + ModInv<I> + Integer 
+{
+    type Output = Mod<I>;
+
+    fn div(self, rhs: Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (self.value / rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, I> Div<&'a Mod<I>> for Mod<I>
+    where I: Clone + Eq + Debug + Div<&'a I, Output=I> + ModInv<I> + Integer 
+{
+    type Output = Mod<I>;
+
+    fn div(self, rhs: &'a Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (self.value / &rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, I> Div<Mod<I>> for &'a Mod<I>
+    where I: Clone + Eq + Debug + ModInv<I> + Integer,
+          &'a I: Div<I, Output=I>
+{
+    type Output = Mod<I>;
+
+    fn div(self, rhs: Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (&self.value / rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, 'b, I> Div<&'a Mod<I>> for &'b Mod<I>
+    where I: Clone + Eq + Debug + Div<&'a I, Output=I> + ModInv<I> + Integer,
+          &'b I: Div<&'a I, Output=I>
+{
+    type Output = Mod<I>;
+
+    fn div(self, rhs: &'a Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (&self.value / &rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
