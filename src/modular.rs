@@ -1,6 +1,6 @@
 use modinv::ModInv;
 use modmult::ModMult;
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, Sub};
 use std::fmt::Debug;
 use num::{Zero, One, Integer};
 
@@ -149,6 +149,64 @@ impl<'a, 'b, I> Mul<&'a Mod<I>> for &'b Mod<I>
         assert_eq!(self.modulus, rhs.modulus);
 
         let new_value = self.value.mod_mult(&rhs.value, &self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<I> Sub<Mod<I>> for Mod<I>
+    where I: Clone + Eq + Debug + Sub<I, Output=I> + ModInv<I> + Integer
+{
+    type Output = Mod<I>;
+
+    fn sub(self, rhs: Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (self.value + rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, I> Sub<&'a Mod<I>> for Mod<I>
+    where I: Clone + Eq + Debug + Sub<&'a I, Output=I> + ModInv<I> + Integer
+{
+    type Output = Mod<I>;
+
+    fn sub(self, rhs: &'a Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (self.value - &rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, I> Sub<Mod<I>> for &'a Mod<I>
+    where I: Clone + Eq + Debug + Sub<&'a I, Output=I> + ModInv<I> + Integer,
+          &'a I: Sub<I, Output=I>
+{
+    type Output = Mod<I>;
+
+    fn sub(self, rhs: Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (&self.value - rhs.value).mod_floor(&self.modulus);
+
+        Mod::new(&new_value, &self.modulus)
+    }
+}
+
+impl<'a, 'b, I> Sub<&'a Mod<I>> for &'b Mod<I>
+    where I: Clone + Eq + Debug + Sub<&'a I, Output=I> + ModInv<I> + Integer,
+          &'b I: Sub<&'a I, Output=I>
+{
+    type Output = Mod<I>;
+
+    fn sub(self, rhs: &'a Mod<I>) -> Mod<I> {
+        assert_eq!(self.modulus, rhs.modulus);
+
+        let new_value = (&self.value - &rhs.value).mod_floor(&self.modulus);
 
         Mod::new(&new_value, &self.modulus)
     }
