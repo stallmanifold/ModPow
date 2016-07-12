@@ -3,7 +3,7 @@ use num::bigint::big_digit;
 use std::cmp;
 
 
-/// Computes the product ot two integers modulo a modulus.
+/// Computes the product of two integers modulo a modulus.
 pub trait ModMult {
     fn mod_mult(self: &Self, other: &Self, modulus: &Self) -> Self;
 }

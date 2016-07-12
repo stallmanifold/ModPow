@@ -1,8 +1,8 @@
 use modinv::ModInv;
 use modmult::ModMult;
-use std::ops::{Add, Mul, Sub, Div};
+use std::ops::{Add, Mul, Sub, Neg};
 use std::fmt::Debug;
-use num::{Zero, One, Integer};
+use num::{Zero, One, Integer, Bounded};
 
 
 #[derive(Clone, Debug)]
@@ -24,11 +24,13 @@ impl<I> Mod<I> where I: Debug + Clone + Eq + ModInv<I> + Integer {
     }
 
     fn inv(&self) -> Option<Mod<I>> {
-        let result = self.value.mod_inv(&self.modulus);
-        match result {
-            Some(new_val) => Some(Mod::new(&new_val, &self.modulus)),
-            None          => None,
-        }
+        self.value.mod_inv(&self.modulus).map(|val| { 
+            Mod::new(&val, &self.modulus) 
+        })
+    }
+
+    fn has_inv(&self) -> bool {
+        self.inv().is_some()
     }
 
     fn zero(modulus: &I) -> Mod<I> {
@@ -212,61 +214,26 @@ impl<'a, 'b, I> Sub<&'a Mod<I>> for &'b Mod<I>
     }
 }
 
-impl<I> Div<Mod<I>> for Mod<I>
-    where I: Clone + Eq + Debug + Div<I, Output=I> + ModInv<I> + Integer 
-{
+impl<I> Neg for Mod<I> 
+    where I: Eq + Clone + Debug + ModInv<I> + Neg<Output=I> + Integer
+{    
     type Output = Mod<I>;
 
-    fn div(self, rhs: Mod<I>) -> Mod<I> {
-        assert_eq!(self.modulus, rhs.modulus);
-
-        let new_value = (self.value / rhs.value).mod_floor(&self.modulus);
-
-        Mod::new(&new_value, &self.modulus)
+    fn neg(self) -> Mod<I> {
+        Mod::new(&(-self.value), &self.modulus)
     }
-}
+} 
 
-impl<'a, I> Div<&'a Mod<I>> for Mod<I>
-    where I: Clone + Eq + Debug + Div<&'a I, Output=I> + ModInv<I> + Integer 
+impl<'a, I> Neg for &'a Mod<I> 
+    where I: Eq + Clone + Debug + ModInv<I> + Integer,
+          &'a I: Neg<Output=I>
 {
     type Output = Mod<I>;
 
-    fn div(self, rhs: &'a Mod<I>) -> Mod<I> {
-        assert_eq!(self.modulus, rhs.modulus);
+    fn neg(self) -> Mod<I> {
+        let neg_val = - &self.value;
 
-        let new_value = (self.value / &rhs.value).mod_floor(&self.modulus);
-
-        Mod::new(&new_value, &self.modulus)
-    }
-}
-
-impl<'a, I> Div<Mod<I>> for &'a Mod<I>
-    where I: Clone + Eq + Debug + ModInv<I> + Integer,
-          &'a I: Div<I, Output=I>
-{
-    type Output = Mod<I>;
-
-    fn div(self, rhs: Mod<I>) -> Mod<I> {
-        assert_eq!(self.modulus, rhs.modulus);
-
-        let new_value = (&self.value / rhs.value).mod_floor(&self.modulus);
-
-        Mod::new(&new_value, &self.modulus)
-    }
-}
-
-impl<'a, 'b, I> Div<&'a Mod<I>> for &'b Mod<I>
-    where I: Clone + Eq + Debug + Div<&'a I, Output=I> + ModInv<I> + Integer,
-          &'b I: Div<&'a I, Output=I>
-{
-    type Output = Mod<I>;
-
-    fn div(self, rhs: &'a Mod<I>) -> Mod<I> {
-        assert_eq!(self.modulus, rhs.modulus);
-
-        let new_value = (&self.value / &rhs.value).mod_floor(&self.modulus);
-
-        Mod::new(&new_value, &self.modulus)
+        Mod::new(&neg_val, &self.modulus)
     }
 }
 
