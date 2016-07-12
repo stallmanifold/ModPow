@@ -12,3 +12,4 @@ pub mod modexp;
 pub mod modmult;
 pub mod extended_gcd;
 pub mod modinv;
+pub mod modular;
