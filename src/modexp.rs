@@ -8,7 +8,7 @@ pub trait ModExp {
     /// b^e mod m
     /// ```
     /// where b is the base, e is the exponent, and m is the modulus. 
-    fn mod_exp(base: &Self, exponent: &Self, modulus: &Self) -> Self;
+    fn mod_exp(self: &Self, exponent: &Self, modulus: &Self) -> Self;
 }
 
 #[inline]
@@ -45,7 +45,7 @@ fn __mod_exp<T: PrimInt>(base: &T, exponent: &T, modulus: &T) -> T {
 macro_rules! mod_exp_bignum {
     ( $ T : ty ) => {
         impl ModExp for $T {
-            fn mod_exp(base: &$T, exponent: &$T, modulus: &$T) -> $T {
+            fn mod_exp(self: &$T, exponent: &$T, modulus: &$T) -> $T {
                 let zero: $T = <$T as Zero>::zero();
 
                 assert!(*modulus != zero);
@@ -58,15 +58,15 @@ macro_rules! mod_exp_bignum {
                 }
 
                 let mut result: $T = <$T as One>::one();
-                let mut modded_base: $T = base.mod_floor(modulus);
+                let mut base: $T   = self.mod_floor(modulus);
                 let mut divided_exponent: $T = exponent.clone();
         
                 while divided_exponent > zero {
                     if divided_exponent.mod_floor(&two) == one {
-                        result = (&result * &modded_base).mod_floor(modulus);
+                        result = (&result * &base).mod_floor(modulus);
                     }
                     divided_exponent = divided_exponent >> 1;
-                    modded_base = (&modded_base * &modded_base).mod_floor(modulus);
+                    base = (&base * &base).mod_floor(modulus);
                 }
 
                 assert!(result < *modulus);
@@ -84,8 +84,8 @@ mod_exp_bignum!(BigUint);
 macro_rules! mod_exp {
     ( $ T : ty ) => {
         impl ModExp for $T {
-            fn mod_exp(base: &$T, exponent: &$T, modulus: &$T) -> $T {
-                __mod_exp(base, exponent, modulus)
+            fn mod_exp(self: &$T, exponent: &$T, modulus: &$T) -> $T {
+                __mod_exp(self, exponent, modulus)
             }
         }  
     }
@@ -346,7 +346,7 @@ mod tests {
 
     fn run_test(test: &Test) {
         for test_case in test.data.iter() {
-            let result = <BigInt as ModExp>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
+            let result = test_case.base.mod_exp(&test_case.exponent, &test_case.modulus);
             assert_eq!(result, test_case.expected);
         }
     }
@@ -358,10 +358,9 @@ mod tests {
         let exponent = BigInt::from(53);
         let base     = BigInt::from(11);
 
-        let result = <BigInt as ModExp>::mod_exp(&base, &exponent, &modulus);
+        base.mod_exp(&exponent, &modulus);
 
-        assert_eq!(result, result);
-        // mod_pow failed.
+        // mod_exp did not panic.
         assert!(false);
     }
 
@@ -384,7 +383,7 @@ mod tests {
     #[allow(unused_must_use)]
     fn print_test_cases(test: &Test) {
         for test_case in test.data.iter() {
-            let result = <BigInt as ModExp>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
+            let result = test_case.base.mod_exp(&test_case.exponent, &test_case.modulus);
             writeln!(&mut io::stderr(), "\nmodulus:  {}", test_case.modulus);
             writeln!(&mut io::stderr(), "base:     {}", test_case.base);
             writeln!(&mut io::stderr(), "exponent: {}", test_case.exponent);
@@ -467,7 +466,7 @@ mod tests {
 
     fn run_test_i(test: &TestI) {
         for test_case in test.data.iter() {
-            let result = <isize as ModExp>::mod_exp(&test_case.base, &test_case.exponent, &test_case.modulus);
+            let result = test_case.base.mod_exp(&test_case.exponent, &test_case.modulus);
             assert_eq!(result, test_case.expected);
         }
     }
@@ -533,10 +532,9 @@ mod bench {
 
         for test_case in test.data.iter() {
             bencher.iter(|| 
-                {
-                    <BigInt as ModExp>::mod_exp(&test_case.base, 
-                                            &test_case.exponent, 
-                                            &test_case.modulus);
+                { 
+                    test_case.base
+                             .mod_exp(&test_case.exponent, &test_case.modulus);
                 }
             );
         }
