@@ -1,6 +1,6 @@
 [package]
 name = "modal"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["Stallmanifold <stallmanifold@gmail.com>"]
 
 [lib]

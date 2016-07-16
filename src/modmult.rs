@@ -124,4 +124,14 @@ mod tests {
     fn test_mod_mult() {
         run_tests(&mod_mult_test_cases());
     }
+
+    #[test]
+    #[should_panic]
+    fn test_mod_mult_zero_mod() {
+        let x = BigInt::from(735172765);
+        let y = BigInt::from(446253906);
+        let modulus = BigInt::from(0);
+
+        x.mod_mult(&y, &modulus);
+    }
 }
