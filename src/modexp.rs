@@ -106,75 +106,28 @@ impl ModExp for BigUint {
     }
 }
 
-impl ModExp for usize {
-
-    fn mod_exp(base: &usize, exponent: &usize, modulus: &usize) -> usize {
-        __mod_exp(base, exponent, modulus)
+// Macro for implementations of ModExp trait.
+macro_rules! mod_exp {
+    ( $T:ty ) => {
+        impl ModExp for $T {
+            fn mod_exp(base: &$T, exponent: &$T, modulus: &$T) -> $T {
+                __mod_exp(base, exponent, modulus)
+            }
+        }  
     }
 }
 
-impl ModExp for u8 {
+mod_exp!(u8);
+mod_exp!(u16);
+mod_exp!(u32);
+mod_exp!(u64);
+mod_exp!(usize);
+mod_exp!(i8);
+mod_exp!(i16);
+mod_exp!(i32);
+mod_exp!(i64);
+mod_exp!(isize);
 
-    fn mod_exp(base: &u8, exponent: &u8, modulus: &u8) -> u8 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for u16 {
-
-    fn mod_exp(base: &u16, exponent: &u16, modulus: &u16) -> u16 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for u32 {
-
-    fn mod_exp(base: &u32, exponent: &u32, modulus: &u32) -> u32 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for u64 {
-
-    fn mod_exp(base: &u64, exponent: &u64, modulus: &u64) -> u64 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for isize {
-
-    fn mod_exp(base: &isize, exponent: &isize, modulus: &isize) -> isize {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for i8 {
-
-    fn mod_exp(base: &i8, exponent: &i8, modulus: &i8) -> i8 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for i16 {
-
-    fn mod_exp(base: &i16, exponent: &i16, modulus: &i16) -> i16 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for i32 {
-
-    fn mod_exp(base: &i32, exponent: &i32, modulus: &i32) -> i32 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
-
-impl ModExp for i64 {
-
-    fn mod_exp(base: &i64, exponent: &i64, modulus: &i64) -> i64 {
-        __mod_exp(base, exponent, modulus)
-    }
-}
 
 #[cfg(test)]
 mod tests {
