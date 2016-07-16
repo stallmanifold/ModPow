@@ -42,73 +42,48 @@ fn __mod_exp<T: PrimInt>(base: &T, exponent: &T, modulus: &T) -> T {
     result
 }
 
-impl ModExp for BigInt {
+// Implementation of the ModExp trait for BigInt and BigUint.
+macro_rules! mod_exp_bignum {
+    ( $ T : ty ) => {
+        impl ModExp for $T {
+            fn mod_exp(base: &$T, exponent: &$T, modulus: &$T) -> $T {
+                let zero: $T = <$T as Zero>::zero();
 
-    fn mod_exp(base: &BigInt, exponent: &BigInt, modulus: &BigInt) -> BigInt {
-        let zero: BigInt = Zero::zero();
+                assert!(*modulus != zero);
 
-        assert!(*modulus != zero);
+                let one: $T = <$T as One>::one();
+                let two: $T = <$T as One>::one() + <$T as One>::one();
 
-        let one: BigInt = One::one();
-        let two: BigInt = <BigInt as One>::one() + <BigInt as One>::one();
+                if *modulus == one {
+                    return zero;
+                }
 
-        if *modulus == one {
-            return zero;
-        }
-
-        let mut result: BigInt = One::one();
-        let mut modded_base: BigInt = base.mod_floor(modulus);
-        let mut divided_exponent: BigInt = exponent.clone();
+                let mut result: $T = <$T as One>::one();
+                let mut modded_base: $T = base.mod_floor(modulus);
+                let mut divided_exponent: $T = exponent.clone();
         
-        while divided_exponent > zero {
-            if divided_exponent.mod_floor(&two) == one {
-                result = (&result * &modded_base).mod_floor(modulus);
+                while divided_exponent > zero {
+                    if divided_exponent.mod_floor(&two) == one {
+                        result = (&result * &modded_base).mod_floor(modulus);
+                    }
+                    divided_exponent = divided_exponent >> 1;
+                    modded_base = (&modded_base * &modded_base).mod_floor(modulus);
+                }
+
+                assert!(result < *modulus);
+
+                result
             }
-            divided_exponent = divided_exponent >> 1;
-            modded_base = (&modded_base * &modded_base).mod_floor(modulus);
         }
-
-        assert!(result < *modulus);
-
-        result
     }
 }
 
-impl ModExp for BigUint {
-
-    fn mod_exp(base: &BigUint, exponent: &BigUint, modulus: &BigUint) -> BigUint {
-        let zero: BigUint = Zero::zero();
-
-        assert!(*modulus != zero);
-
-        let one: BigUint = One::one();
-        let two: BigUint = <BigUint as One>::one() + <BigUint as One>::one();
-
-        if *modulus == one {
-            return zero;
-        }
-
-        let mut result: BigUint = One::one();
-        let mut modded_base: BigUint = base.mod_floor(modulus);
-        let mut divided_exponent: BigUint = exponent.clone();
-        
-        while divided_exponent > zero {
-            if divided_exponent.mod_floor(&two) == one {
-                result = (&result * &modded_base).mod_floor(modulus);
-            }
-            divided_exponent = divided_exponent >> 1;
-            modded_base = (&modded_base * &modded_base).mod_floor(modulus);
-        }
-
-        assert!(result < *modulus);
-
-        result
-    }
-}
+mod_exp_bignum!(BigInt);
+mod_exp_bignum!(BigUint);
 
 // Macro for implementations of ModExp trait.
 macro_rules! mod_exp {
-    ( $T:ty ) => {
+    ( $ T : ty ) => {
         impl ModExp for $T {
             fn mod_exp(base: &$T, exponent: &$T, modulus: &$T) -> $T {
                 __mod_exp(base, exponent, modulus)
