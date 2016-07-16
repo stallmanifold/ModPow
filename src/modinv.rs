@@ -50,35 +50,22 @@ fn __mod_inv<T>(x: &T, modulus: &T) -> Option<T> where T: PrimInt + ExtendedGcd<
     })
 }
 
-impl ModInv<isize> for isize {
-    fn mod_inv(&self, modulus: &isize) -> Option<isize> {
-        __mod_inv(self, modulus)
-    }
+// macro for defining ModInv implementations.
+macro_rules! mod_inv {
+    ( $ T : ty ) => {
+        impl ModInv<$T> for $T {
+            fn mod_inv(&self, modulus: &$T) -> Option<$T> {
+                __mod_inv(self, modulus)
+            }
+        }
+    } 
 }
 
-impl ModInv<i8> for i8 {
-    fn mod_inv(&self, modulus: &i8) -> Option<i8> {
-        __mod_inv(self, modulus)        
-    }
-}
-
-impl ModInv<i16> for i16 {
-    fn mod_inv(&self, modulus: &i16) -> Option<i16> {
-        __mod_inv(self, modulus)        
-    }
-}
-
-impl ModInv<i32> for i32 {
-    fn mod_inv(&self, modulus: &i32) -> Option<i32> {
-        __mod_inv(self, modulus)        
-    }
-}
-
-impl ModInv<i64> for i64 {
-    fn mod_inv(&self, modulus: &i64) -> Option<i64> {
-        __mod_inv(self, modulus)        
-    }
-}
+mod_inv!(i8);
+mod_inv!(i16);
+mod_inv!(i32);
+mod_inv!(i64);
+mod_inv!(isize);
 
 
 #[cfg(test)]

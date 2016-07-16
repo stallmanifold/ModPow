@@ -221,55 +221,26 @@ fn __valid_solution<T: PrimInt>(x: &T, y: &T, coef_x: &T, coef_y: &T, gcd_xy: &T
     (*coef_x) * (*x) + (*coef_y) * (*y) == *gcd_xy
 }
 
-impl ExtendedGcd<isize> for isize {
-    fn extended_gcd(&self, y: &isize) -> Option<Gcd<isize>> {
-        safe_extended_gcd(self, y)
-    }
+macro_rules! extended_gcd {
+    ( $ T : ty ) => {
+        impl ExtendedGcd<$T> for $T {
+            fn extended_gcd(&self, y: &$T) -> Option<Gcd<$T>> {
+                safe_extended_gcd(self, y)
+            }
 
-    fn valid_solution(x: &isize, y: &isize, coef_x: &isize, coef_y: &isize, gcd_xy: &isize) -> bool {
-        __valid_solution(x, y, coef_x, coef_y, gcd_xy)
+            fn valid_solution(x: &$T, y: &$T, coef_x: &$T, coef_y: &$T, gcd_xy: &$T) -> bool {
+                __valid_solution(x, y, coef_x, coef_y, gcd_xy)
+            }       
+        }
     }
 }
 
-impl ExtendedGcd<i8> for i8 {
-    fn extended_gcd(&self, y: &i8) -> Option<Gcd<i8>> {
-        safe_extended_gcd(self, y)
-    }
+extended_gcd!(i8);
+extended_gcd!(i16);
+extended_gcd!(i32);
+extended_gcd!(i64);
+extended_gcd!(isize);
 
-    fn valid_solution(x: &i8, y: &i8, coef_x: &i8, coef_y: &i8, gcd_xy: &i8) -> bool {
-        __valid_solution(x, y, coef_x, coef_y, gcd_xy)
-    }
-}
-
-impl ExtendedGcd<i16> for i16 {
-    fn extended_gcd(&self, y: &i16) -> Option<Gcd<i16>> {
-        safe_extended_gcd(self, y)
-    }
-
-    fn valid_solution(x: &i16, y: &i16, coef_x: &i16, coef_y: &i16, gcd_xy: &i16) -> bool {
-        __valid_solution(x, y, coef_x, coef_y, gcd_xy)
-    }
-}
-
-impl ExtendedGcd<i32> for i32 {
-    fn extended_gcd(&self, y: &i32) -> Option<Gcd<i32>> {
-        safe_extended_gcd(self, y)
-    }
-
-    fn valid_solution(x: &i32, y: &i32, coef_x: &i32, coef_y: &i32, gcd_xy: &i32) -> bool {
-        __valid_solution(x, y, coef_x, coef_y, gcd_xy)
-    }
-}
-
-impl ExtendedGcd<i64> for i64 {
-    fn extended_gcd(&self, y: &i64) -> Option<Gcd<i64>> {
-        safe_extended_gcd(self, y)
-    }
-
-    fn valid_solution(x: &i64, y: &i64, coef_x: &i64, coef_y: &i64, gcd_xy: &i64) -> bool {
-        __valid_solution(x, y, coef_x, coef_y, gcd_xy)
-    }
-}
 
 #[cfg(test)]
 mod tests {
