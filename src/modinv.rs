@@ -1,5 +1,4 @@
 use num::{Zero, One, BigInt, PrimInt};
-use num::bigint::Sign;
 use extended_gcd::ExtendedGcd;
 
 
@@ -20,14 +19,14 @@ impl ModInv<BigInt> for BigInt {
         let result = self.extended_gcd(modulus);
         
         result.and_then(|gcd_result| {
-            match gcd_result.gcd_xy == One::one() {
-                true => {
-                    match gcd_result.coef_x.sign() {
-                        Sign::Plus | Sign::NoSign => Some(gcd_result.coef_x),
-                        Sign::Minus => Some(modulus + gcd_result.coef_x), 
-                    }
+            if gcd_result.gcd_xy == One::one() {
+                if gcd_result.coef_x >= Zero::zero() {
+                    Some(gcd_result.coef_x)
+                } else {
+                    Some(modulus + gcd_result.coef_x)
                 }
-                false => None,
+            } else {
+                None
             }
         })
     }
@@ -38,14 +37,14 @@ fn __mod_inv<T>(x: &T, modulus: &T) -> Option<T> where T: PrimInt + ExtendedGcd<
     let result = x.extended_gcd(modulus);
     
     result.and_then(|gcd_result| {
-        match gcd_result.gcd_xy == One::one() {
-            true => {
-                match gcd_result.coef_x >= Zero::zero() {
-                    true  => Some(gcd_result.coef_x),
-                    false => Some(*modulus + gcd_result.coef_x),
-                }
+        if gcd_result.gcd_xy == One::one() {
+            if gcd_result.coef_x >= Zero::zero() {
+                Some(gcd_result.coef_x)
+            } else {
+                Some(*modulus + gcd_result.coef_x)
             }
-            false => None,
+        } else {
+            None
         }
     })
 }
