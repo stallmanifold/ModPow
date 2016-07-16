@@ -32,65 +32,28 @@ fn default_multiply(num: &BigInt, other_num: &BigInt, modulus: &BigInt) -> BigIn
     (num * other_num).mod_floor(modulus)
 }
 
-impl ModMult for u8 {
-    fn mod_mult(self: &u8, other: &u8, modulus: &u8) -> u8 {
-        __mod_mult(self, other, modulus)
+// Macro for generating ModMult implementations.
+macro_rules! mod_mult {
+    ( $T:ty ) => {
+        impl ModMult for $T {
+            fn mod_mult(self: &$T, other: &$T, modulus: &$T) -> $T {
+                __mod_mult(self, other, modulus)
+            }
+        } 
     }
 }
 
-impl ModMult for u16 {
-    fn mod_mult(self: &u16, other: &u16, modulus: &u16) -> u16 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for u32 {
-    fn mod_mult(self: &u32, other: &u32, modulus: &u32) -> u32 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for u64 {
-    fn mod_mult(self: &u64, other: &u64, modulus: &u64) -> u64 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for usize {
-    fn mod_mult(self: &usize, other: &usize, modulus: &usize) -> usize {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for i8 {
-    fn mod_mult(self: &i8, other: &i8, modulus: &i8) -> i8 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for i16 {
-    fn mod_mult(self: &i16, other: &i16, modulus: &i16) -> i16 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for i32 {
-    fn mod_mult(self: &i32, other: &i32, modulus: &i32) -> i32 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for i64 {
-    fn mod_mult(self: &i64, other: &i64, modulus: &i64) -> i64 {
-        __mod_mult(self, other, modulus)
-    }
-}
-
-impl ModMult for isize {
-    fn mod_mult(self: &isize, other: &isize, modulus: &isize) -> isize {
-        __mod_mult(self, other, modulus)
-    }
-}
+// Implementations of ModMult trait. 
+mod_mult!(u8);
+mod_mult!(u16);
+mod_mult!(u32);
+mod_mult!(u64);
+mod_mult!(usize);
+mod_mult!(i8);
+mod_mult!(i16);
+mod_mult!(i32);
+mod_mult!(i64);
+mod_mult!(isize);
 
 impl ModMult for BigInt {
     fn mod_mult(self: &BigInt, other: &BigInt, modulus: &BigInt) -> BigInt {
