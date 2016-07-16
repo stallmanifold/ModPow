@@ -332,5 +332,46 @@ mod tests {
     fn test_extended_gcd() {
         run_gcd_test(&gcd_test_cases());
     }
+}
 
+#[cfg(test)]
+mod bench {
+    use num::{BigInt, Num};
+    use test::Bencher;
+    use super::ExtendedGcd;
+
+
+    struct Test {
+        data: Vec<TestCase>,
+    }
+
+    struct TestCase {
+        x: BigInt,
+        y: BigInt,
+    }
+
+    fn bench_test_case() -> Test {
+        let x = <BigInt as Num>::from_str_radix("294248851906335666255475965306356\
+                                                 33692994051181214434796327203075", 10).unwrap();
+        let y = <BigInt as Num>::from_str_radix("919087970205406919189208074679995\
+                                                 123273961", 10).unwrap();
+
+        Test {
+            data: vec![
+                TestCase {
+                    x: x,
+                    y: y,
+                }
+            ]
+        }
+    }
+
+    #[bench]
+    fn bench_mod_exp(bencher: &mut Bencher) {
+        let test = bench_test_case();
+
+        for test_case in test.data.iter() {
+            bencher.iter(|| { test_case.x.extended_gcd(&test_case.y) });
+        }
+    }
 }

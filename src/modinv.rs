@@ -224,3 +224,43 @@ mod tests {
         run_non_inv_tests(&non_invertible_bigint_test_cases());
     }
 }
+
+#[cfg(test)]
+mod bench {
+    use super::ModInv;
+    use test::Bencher;
+    use num::{Num, BigInt};
+
+    struct TestCase {
+        value: BigInt,
+        modulus: BigInt,
+    }
+
+    struct Test {
+        data: Vec<TestCase>,
+    }
+
+    fn bench_test_case() -> Test {
+        let value = <BigInt as Num>::from_str_radix("2983498573497", 10).unwrap();
+        let modulus =  <BigInt as Num>::from_str_radix("903455098240", 10).unwrap();
+
+        Test {
+            data: vec! [
+                TestCase {
+                    value: value,
+                    modulus: modulus,
+                }
+            ]
+        }
+    }
+
+    #[bench]
+    fn bench_mod_inv(bencher: &mut Bencher) {
+        let test = bench_test_case();
+
+        for test_case in test.data.iter() {
+            bencher.iter(|| test_case.value.mod_inv(&test_case.modulus));      
+        }
+
+    }
+}

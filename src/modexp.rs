@@ -2,13 +2,12 @@ use num::{Integer, Zero, One, PrimInt, BigInt, BigUint};
 
 
 /// Trait for modular exponentiation.
-///
-/// The function `mod_exp` computes
-/// ```
-/// b^e mod m
-/// ```
-/// where b is the base, e is the exponent, and m is the modulus. 
-pub trait ModExp { 
+pub trait ModExp {
+    /// The function `mod_exp` computes
+    /// ```
+    /// b^e mod m
+    /// ```
+    /// where b is the base, e is the exponent, and m is the modulus. 
     fn mod_exp(base: &Self, exponent: &Self, modulus: &Self) -> Self;
 }
 
@@ -366,7 +365,7 @@ mod tests {
         assert!(false);
     }
 
-#[test]
+    #[test]
     fn test_run_small_positive_integers() {
         run_test(&test_cases_small_integers());
     }
@@ -486,7 +485,18 @@ mod bench {
     use super::ModExp;
     use test::Bencher;
 
-    fn bench_test_case() -> (BigInt, BigInt, BigInt) {
+
+    struct TestCase {
+        base: BigInt,
+        exponent: BigInt,
+        modulus: BigInt,
+    }
+
+    struct Test {
+        data: Vec<TestCase>,
+    }
+
+    fn bench_test_case() -> Test {
         let modulus =  Num::from_str_radix(
                            "150826454031439491816608041718464271500002050380870115404515300913\
                             741786003681086005673491004941492244761691622250175203899279707903\
@@ -506,13 +516,29 @@ mod bench {
                              478086087367762360110804632458445785486792492578144054515899993252\
                              84152127603137558146879284613544712519760740972", 10).unwrap();
 
-        (base, exponent, modulus)
+        Test {
+            data: vec![
+                TestCase {
+                    base: base,
+                    exponent: exponent,
+                    modulus: modulus,
+                }
+            ]
+        }
     }
 
     #[bench]
-    fn bench_mod_exp(b: &mut Bencher) {
-        let (base, exponent, modulus) = bench_test_case();
+    fn bench_mod_exp(bencher: &mut Bencher) {
+        let test = bench_test_case();
 
-        b.iter(|| <BigInt as ModExp>::mod_exp(&base, &exponent, &modulus));
+        for test_case in test.data.iter() {
+            bencher.iter(|| 
+                {
+                    <BigInt as ModExp>::mod_exp(&test_case.base, 
+                                            &test_case.exponent, 
+                                            &test_case.modulus);
+                }
+            );
+        }
     }
 }

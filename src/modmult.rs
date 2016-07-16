@@ -1,6 +1,4 @@
-use num::{Zero, One, Num, BigInt, Integer, PrimInt};
-use num::bigint::big_digit;
-use std::cmp;
+use num::{Zero, One, BigInt, Integer, PrimInt};
 
 
 /// Computes the product of two integers modulo a modulus.
