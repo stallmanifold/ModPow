@@ -1,13 +1,36 @@
 use num::{Integer, Zero, One, PrimInt, BigInt, BigUint};
 
 
-/// Trait for modular exponentiation.
+/// The `ModExp` trait defines an interface for modular exponentiation.
 pub trait ModExp {
     /// The function `mod_exp` computes
+    /// ```text
+    /// b ^ e (mod m)
     /// ```
-    /// b^e mod m
+    /// where b is the base, e is the exponent, and m is the modulus.
+    ///
+    /// # Panics
+    /// when a modulus of zero is passed.
+    ///
+    /// # Examples
+    /// 
+    /// ```rust
+    /// extern crate num;
+    /// extern crate modal;
+    ///
+    /// use num::BigInt;
+    /// use modal::ModExp; 
+    ///
+    /// fn main() {
+    ///     let base     = BigInt::from(17);
+    ///     let exponent = BigInt::from(8);
+    ///     let modulus  = BigInt::from(29);
+    ///     let exp      = base.mod_exp(&exponent, &modulus);
+    ///
+    ///     println!("{}", exp);
+    /// }
     /// ```
-    /// where b is the base, e is the exponent, and m is the modulus. 
+    ///
     fn mod_exp(self: &Self, exponent: &Self, modulus: &Self) -> Self;
 }
 

@@ -2,15 +2,39 @@ use num::{Zero, One, BigInt, PrimInt};
 use extended_gcd::ExtendedGcd;
 
 
+/// The `ModInv` trait defines an interface for computing the inverse of
+/// a value modulo a modulus.
 pub trait ModInv<T> {
     /// Computes the modular inverse of an integer x: 
+    /// ```text
+    /// y == x ^ -1 (mod m)
     /// ```
-    /// y = x^-1 mod p
+    /// where m is the modulus, and
+    /// ```text
+    /// x * y == 1 (mod m)
     /// ```
-    /// where p is the modulus, and
+    /// # Safety
+    /// The function `mod_inv` returns None when it is passed a modulus 
+    /// of zero, or the value to be inverted does not have an inverse.
+    ///
+    /// # Examples
+    /// 
+    /// ```rust
+    /// extern crate num;
+    /// extern crate modal;
+    ///
+    /// use num::BigInt;
+    /// use modal::ModInv; 
+    ///
+    /// fn main() {
+    ///     let base    = BigInt::from(17);
+    ///     let modulus = BigInt::from(29);
+    ///     let exp     = base.mod_inv(&modulus).unwrap();
+    ///
+    ///     println!("{}", exp);
+    /// }
     /// ```
-    /// x*y = 1 mod p
-    /// ```
+    ///
     fn mod_inv(&self, modulus: &T) -> Option<T>;
 }
 

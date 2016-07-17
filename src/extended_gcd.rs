@@ -4,7 +4,8 @@ use num::bigint::Sign;
 
 /// A data structure storing the results of computing the greatest common
 /// divisor of two integers.
-pub struct Gcd<T> {
+#[derive(Clone)]
+pub struct Gcd<T> where T: Clone {
     pub coef_x: T,
     pub coef_y: T,
     pub g:      T,
@@ -12,30 +13,64 @@ pub struct Gcd<T> {
 }
 
 /// Extended Gcd Algorithm trait.
-pub trait ExtendedGcd<T> {
+pub trait ExtendedGcd<T> where T: Clone {
     /// Implementation of the binary extended gcd algorithm.
     ///
     /// See Algorithm 14.61 of the 'Handbook of Applied Cryptography'.
     ///
     /// Given integers x and y, compute integers a and b such that
-    ///
-    /// a*x + b*y = v where v = gcd(x, y).
-    ///
+    /// ```text
+    /// a * x + b * y == v where v == gcd(x, y).
+    /// ```
     /// Note that the coefficients found by the extended GCD algorithm are not unique: That is,
     /// there is more than one set of solutions to the diophantine equation above.
     ///
     /// # Safety
-    /// Returns None if x < 0 or y < 0.
+    /// Returns ```None``` if ```x < 0``` or ```y < 0```.
+    ///
+    /// # Examples
+    /// 
+    /// ```rust
+    /// extern crate num;
+    /// extern crate modal;
+    ///
+    /// use num::BigInt;
+    /// use modal::ExtendedGcd;
+    ///
+    /// fn main() {
+    ///     let x = BigInt::from(693);
+    ///     let y = BigInt::from(609);
+    ///     let gcd_xy = x.extended_gcd(&y);
+    /// }
+    /// ```
     fn extended_gcd(&self, y: &T) -> Option<Gcd<T>>;
 
     /// Tests whether a pair of coefficients coef_x and coef_t are 
     /// valid solutions to the equation
-    /// ```
-    /// coef_x * x + coef_y * y = gcd_xy
+    /// ```text
+    /// coef_x * x + coef_y * y == gcd_xy
     /// ```
     /// where 
+    /// ```text
+    /// gcd_xy == gcd(x,y)
     /// ```
-    /// gcd_xy = gcd(x,y)
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// extern crate num;
+    /// extern crate modal;
+    ///
+    /// use num::BigInt;
+    /// use modal::ExtendedGcd;
+    ///
+    /// fn main() {
+    ///     let x = BigInt::from(693);
+    ///     let y = BigInt::from(609);
+    ///     let gcd = x.extended_gcd(&y).unwrap();
+    ///    
+    ///     assert!(<BigInt as ExtendedGcd<BigInt>>::valid_solution(&x, &y, &gcd.coef_x, &gcd.coef_y, &gcd.gcd_xy));
+    /// }
     /// ```
     fn valid_solution(x: &T, y: &T, coef_x: &T, coef_y: &T, gcd_xy: &T) -> bool;
 }

@@ -1,8 +1,17 @@
 use num::{Zero, BigUint, BigInt, Integer, PrimInt};
 
 
-/// Computes the product of two integers modulo a modulus.
+/// The `ModAdd` trait defines an interface for calculating the sum of two integers 
+/// modulo a modulus.
 pub trait ModAdd {
+    /// The function `mod_add` computes the sum
+    /// ```text
+    /// x + y (mod m)
+    /// ```
+    /// where x, y, and m are integers, and m is the modulus.
+    ///
+    /// # Panics
+    /// when the modulus is zero.
     fn mod_add(self: &Self, other: &Self, modulus: &Self) -> Self;
 }
 

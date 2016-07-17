@@ -1,8 +1,17 @@
 use num::{Zero, One, BigInt, Integer, PrimInt};
 
 
-/// Computes the product of two integers modulo a modulus.
+/// The `ModMult` trait defines an interface for calculating the product of two integers 
+/// modulo a modulus.
 pub trait ModMult {
+    /// The function `mod_mult` computes the product
+    /// ```text
+    /// x * y (mod m)
+    /// ```
+    /// where x, y, and m are integers, and m is the modulus.
+    ///
+    /// # Panics
+    /// when the modulus is zero.
     fn mod_mult(self: &Self, other: &Self, modulus: &Self) -> Self;
 }
 

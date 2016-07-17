@@ -1,8 +1,17 @@
 use num::{Zero, BigUint, BigInt, Integer, PrimInt};
 
 
-/// Computes the product of two integers modulo a modulus.
+/// The `ModSub` trait defines an interface for calculating the difference of two integers 
+/// modulo a modulus.
 pub trait ModSub {
+    /// The function `mod_sub` computes the sum
+    /// ```text
+    /// x - y (mod m)
+    /// ```
+    /// where x, y, and m are integers, and m is the modulus.
+    ///
+    /// # Panics
+    /// when the modulus is zero.
     fn mod_sub(self: &Self, other: &Self, modulus: &Self) -> Self;
 }
 
