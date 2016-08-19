@@ -1,7 +1,7 @@
 use num::{Zero, BigUint, BigInt, Integer, PrimInt};
 
 
-/// The `ModSub` trait defines an interface for calculating the difference of two integers 
+/// The `ModSub` trait defines an interface for calculating the difference of two integers
 /// modulo a modulus.
 pub trait ModSub {
     /// The function `mod_sub` computes the sum
@@ -34,18 +34,18 @@ fn __mod_sub<T: PrimInt>(x: &T, y: &T, modulus: &T) -> T {
     ((*x) - (*y)) % *modulus
 }
 
-// Macro for generating ModAdd implementations.
+// Macro for generating ModSub implementations.
 macro_rules! mod_sub {
     ( $ T : ty ) => {
         impl ModSub for $T {
             fn mod_sub(self: &$T, other: &$T, modulus: &$T) -> $T {
                 __mod_sub(self, other, modulus)
             }
-        } 
+        }
     }
 }
 
-// Implementations of ModAdd trait. 
+// Implementations of ModSub trait.
 mod_sub!(u8);
 mod_sub!(u16);
 mod_sub!(u32);
